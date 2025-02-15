@@ -9,8 +9,8 @@ public final class StarRegex extends Regex {
     }
 
     @Override
-    protected Regex delta() {
-        return EmptyRegex.EPS;
+    protected Nullability getNullability() {
+        return Nullability.NULLABLE;
     }
 
     @Override

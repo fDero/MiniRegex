@@ -11,25 +11,21 @@ public final class ConcatRegex extends Regex {
     }
 
     @Override
-    protected Regex delta() {
-        Regex lxDelta = lxRegex.delta();
-        Regex rxDelta = rxRegex.delta();
-
-        boolean lxEPS = lxDelta == EmptyRegex.EPS;
-        boolean rxEPS = rxDelta == EmptyRegex.EPS;
-        boolean lxFAILURE = lxDelta == EmptyRegex.FAILURE;
-        boolean rxFAILURE = lxDelta == EmptyRegex.FAILURE;
-
-        if (lxEPS && rxEPS) return EmptyRegex.EPS;
-        if (lxFAILURE && rxFAILURE) return EmptyRegex.FAILURE;
-        return new ConcatRegex(lxDelta, rxDelta);
+    protected Nullability getNullability() {
+        switch (lxRegex.compareNullability(rxRegex)) {
+            case BOTH_NON_NULLABLE: return Nullability.NON_NULLABLE;
+            case BOTH_NULLABLE: return Nullability.NULLABLE;
+            default: return Nullability.NON_NULLABLE;
+        }
     }
 
     @Override
     protected Regex derive(char character) {
-        return new UnionRegex(
-            new ConcatRegex(lxRegex.derive(character), rxRegex),
-            new ConcatRegex(lxRegex.delta(), rxRegex.derive(character))
-        );
+        
+        Regex tryDeriveLeft = new ConcatRegex(lxRegex.derive(character), rxRegex);
+        
+        return (lxRegex.getNullability() == Nullability.NON_NULLABLE)
+            ? tryDeriveLeft
+            : new UnionRegex(tryDeriveLeft, rxRegex.derive(character));
     }
 }

@@ -37,7 +37,7 @@ public class UnionRegexMatchTest {
 
     private final Regex optional = new UnionRegex(
         new CharRegex('a'),
-        EmptyRegex.EPS 
+        SpecialRegex.EPS 
     );
 
     @Test

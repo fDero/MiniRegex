@@ -9,14 +9,14 @@ public final class CharRegex extends Regex {
     }
 
     @Override
-    protected Regex delta() {
-        return EmptyRegex.FAILURE;
+    protected Nullability getNullability() {
+        return Nullability.NON_NULLABLE;
     }
 
     @Override
     protected Regex derive(char character) {
         return (this.character == character)
-            ? EmptyRegex.EPS 
-            : EmptyRegex.FAILURE;
+            ? SpecialRegex.EPS 
+            : SpecialRegex.FAILURE;
     }
 }

@@ -11,18 +11,12 @@ public final class UnionRegex extends Regex {
     }
 
     @Override
-    protected Regex delta() {
-        Regex lxDelta = lxRegex.delta();
-        Regex rxDelta = rxRegex.delta();
-
-        boolean lxEPS = lxDelta == EmptyRegex.EPS;
-        boolean rxEPS = rxDelta == EmptyRegex.EPS;
-        boolean lxFAILURE = lxDelta == EmptyRegex.FAILURE;
-        boolean rxFAILURE = lxDelta == EmptyRegex.FAILURE;
-        
-        if (lxEPS || rxEPS) return EmptyRegex.EPS;
-        if (lxFAILURE && rxFAILURE) return EmptyRegex.FAILURE;
-        return new UnionRegex(lxDelta, rxDelta);
+    protected Nullability getNullability() {
+        switch (lxRegex.compareNullability(rxRegex)) {
+            case BOTH_NON_NULLABLE: return Nullability.NON_NULLABLE;
+            case BOTH_NULLABLE: return Nullability.NULLABLE;
+            default: return Nullability.NULLABLE;
+        }
     }
 
     @Override
